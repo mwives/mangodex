@@ -1,7 +1,7 @@
 package mangadex
 
 // Manga
-type mangadexSearchResult struct {
+type mangadexMangaSearchResult struct {
 	Data []struct {
 		ID        string `json:"id"`
 		Atributes struct {
@@ -48,4 +48,20 @@ type MangaResult struct {
 	AltTitles string `json:"altTitles"`
 	Year      int    `json:"year"`
 	Status    string `json:"status"`
+}
+
+// Author
+type mangadexAuthorSearchResult struct {
+	Data []struct {
+		ID        string `json:"id"`
+		Atributes struct {
+			Name string `json:"name"`
+		} `json:"attributes"`
+	}
+}
+
+type Author struct {
+	ID         string `json:"id"`
+	Name       string `json:"name"`
+	TitleCount int    `json:"titleCount"`
 }

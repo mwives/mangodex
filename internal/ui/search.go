@@ -17,7 +17,7 @@ var (
 	MangaAuthorSearchType = "author"
 )
 
-func RunSearch() (string, string) {
+func AskSearchType() (string, string) {
 	form := huh.NewForm(
 		huh.NewGroup(
 			huh.NewSelect[string]().
@@ -27,14 +27,15 @@ func RunSearch() (string, string) {
 					huh.NewOption("Author Name", MangaAuthorSearchType),
 				).
 				Value(&searchType),
-			huh.NewInput().TitleFunc(func() string {
-				if searchType == MangaTitleSearchType {
-					return "Enter Manga Title"
-				} else if searchType == MangaAuthorSearchType {
-					return "Enter Author Name"
-				}
-				return ""
-			}, &searchType).Value(&searchQuery),
+			huh.NewInput().
+				TitleFunc(func() string {
+					if searchType == MangaTitleSearchType {
+						return "Enter Manga Title"
+					} else if searchType == MangaAuthorSearchType {
+						return "Enter Author Name"
+					}
+					return ""
+				}, &searchType).Value(&searchQuery),
 		),
 	)
 

@@ -10,25 +10,37 @@ import (
 func Run() {
 	mangadexApiClient := mangadex.NewMangadexApiClient("https://api.mangadex.org")
 
-	searchType, searchQuery := ui.RunSearch()
+	searchType, searchQuery := ui.AskSearchType()
 
-	var result []mangadex.MangaResult
+	var mangaList []mangadex.MangaResult
 	var err error
 
 	if searchType == ui.MangaTitleSearchType {
-		result, err = mangadexApiClient.SearchMangaByTitle(searchQuery)
+		mangaList, err = mangadexApiClient.SearchMangaByTitle(searchQuery)
 		if err != nil {
 			fmt.Println(err)
 			return
 		}
 	} else if searchType == ui.MangaAuthorSearchType {
-		// TODO: Implement search by author
-		fmt.Println("Search by author not implemented yet")
+		authorResults, err := mangadexApiClient.SearchAuthors(searchQuery)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+
+		selectedAuthor, err := ui.SelectAuthor(authorResults)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+
+		mangaList, err = mangadexApiClient.SearchMangaByAuthorID(selectedAuthor.ID)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
 	} else {
 		fmt.Println("Invalid search type")
 		return
 	}
-
-	fmt.Println(result)
-
 }

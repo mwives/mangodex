@@ -1,6 +1,6 @@
 package mangadex
 
-func FormatMangaResult(mangaData mangadexSearchResult) []MangaResult {
+func FormatMangaResult(mangaData mangadexMangaSearchResult) []MangaResult {
 	var mangaResults []MangaResult
 	for _, mangaData := range mangaData.Data {
 		// Some manga titles are in Japanese, so we use the English title if available

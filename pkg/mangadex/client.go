@@ -1,6 +1,7 @@
 package mangadex
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/go-resty/resty/v2"
@@ -24,7 +25,7 @@ func NewMangadexApiClient(baseURL string) *MangadexApiClient {
 }
 
 func (m *MangadexApiClient) SearchMangaByTitle(title string) ([]MangaResult, error) {
-	var result mangadexSearchResult
+	var result mangadexMangaSearchResult
 
 	_, err := m.client.R().
 		SetQueryParam("limit", "10").
@@ -39,4 +40,50 @@ func (m *MangadexApiClient) SearchMangaByTitle(title string) ([]MangaResult, err
 
 	mangaResults := FormatMangaResult(result)
 	return mangaResults, nil
+}
+
+func (m *MangadexApiClient) SearchMangaByAuthorID(authorID string) ([]MangaResult, error) {
+	var result mangadexMangaSearchResult
+
+	_, err := m.client.R().
+		SetQueryParam("limit", "10").
+		SetQueryParam("offset", "0").
+		SetQueryParam("authorOrArtist", authorID).
+		SetQueryParam("includes[]", "author").
+		SetResult(&result).
+		Get("/manga")
+	if err != nil {
+		return nil, err
+	}
+
+	mangaResults := FormatMangaResult(result)
+	return mangaResults, nil
+}
+
+func (m *MangadexApiClient) SearchAuthors(name string) ([]Author, error) {
+	var result mangadexAuthorSearchResult
+
+	_, err := m.client.R().
+		SetQueryParam("limit", "10").
+		SetQueryParam("offset", "0").
+		SetQueryParam("name", name).
+		SetResult(&result).
+		Get("/author")
+	if err != nil {
+		return nil, err
+	}
+
+	var authorResults []Author
+	for _, authorData := range result.Data {
+		authorResults = append(authorResults, Author{
+			ID:   authorData.ID,
+			Name: authorData.Atributes.Name,
+		})
+	}
+
+	for _, author := range authorResults {
+		fmt.Println(author)
+	}
+
+	return authorResults, nil
 }
