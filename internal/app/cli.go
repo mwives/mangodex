@@ -43,4 +43,12 @@ func Run() {
 		fmt.Println("Invalid search type")
 		return
 	}
+
+	selectedManga, err := ui.SelectManga(mangaList)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	fmt.Println(selectedManga)
 }
