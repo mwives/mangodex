@@ -1,7 +1,6 @@
 package mangadex
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/go-resty/resty/v2"
@@ -79,10 +78,6 @@ func (m *MangadexApiClient) SearchAuthors(name string) ([]Author, error) {
 			ID:   authorData.ID,
 			Name: authorData.Atributes.Name,
 		})
-	}
-
-	for _, author := range authorResults {
-		fmt.Println(author)
 	}
 
 	return authorResults, nil
