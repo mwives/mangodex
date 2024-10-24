@@ -55,12 +55,6 @@ func NewModel(manga mangadex.MangaResult) Model {
 			huh.NewConfirm().
 				Key("confirm").
 				Title("Confirm the manga selection?").
-				Validate(func(v bool) error {
-					if !v {
-						return fmt.Errorf("please confirm the manga selection")
-					}
-					return nil
-				}).
 				Affirmative("Yes").
 				Negative("No"),
 		),
@@ -108,6 +102,10 @@ func (m Model) View() string {
 	switch m.form.State {
 	case huh.StateCompleted:
 		var b strings.Builder
+		if !m.form.GetBool("confirm") {
+			fmt.Fprintf(&b, "Manga selection canceled.")
+			return s.MangaInfoBox.Margin(0, 1).Padding(1, 2).Width(48).Render(b.String()) + "\n\n"
+		}
 		fmt.Fprintf(&b, "Manga selection confirmed!")
 		return s.MangaInfoBox.Margin(0, 1).Padding(1, 2).Width(48).Render(b.String()) + "\n\n"
 	default:
@@ -120,13 +118,12 @@ func (m Model) View() string {
 		{
 			mangaInfo = s.MangaInfoBox.
 				Width(m.width).
-				Render(
-					s.MangaInfoHeader.Render("Title: ") + m.manga.Title + "\n" +
-						s.MangaInfoHeader.Render("Author: ") + m.manga.Author + "\n" +
-						s.MangaInfoHeader.Render("Genres: ") + m.manga.Genres + "\n" +
-						s.MangaInfoHeader.Render("Alt Titles: ") + m.manga.AltTitles + "\n" +
-						s.MangaInfoHeader.Render("Year: ") + fmt.Sprintf("%d", m.manga.Year) + "\n" +
-						s.MangaInfoHeader.Render("Status: ") + m.manga.Status + "\n",
+				Render(s.MangaInfoHeader.Render("Title: ") + m.manga.Title + "\n" +
+					s.MangaInfoHeader.Render("Author: ") + m.manga.Author + "\n" +
+					s.MangaInfoHeader.Render("Genres: ") + m.manga.Genres + "\n" +
+					s.MangaInfoHeader.Render("Alt Titles: ") + m.manga.AltTitles + "\n" +
+					s.MangaInfoHeader.Render("Year: ") + fmt.Sprintf("%d", m.manga.Year) + "\n" +
+					s.MangaInfoHeader.Render("Status: ") + m.manga.Status + "\n",
 				)
 		}
 
