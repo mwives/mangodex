@@ -50,5 +50,5 @@ func Run() {
 		return
 	}
 
-	fmt.Println(selectedManga)
+	ui.ConfirmMangaSelection(selectedManga)
 }
