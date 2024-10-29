@@ -51,6 +51,20 @@ func Run() {
 	}
 
 	ui.ConfirmMangaSelection(selectedManga)
+	language, err := ui.SelectLanguage(*selectedManga.AvailableTranslatedLanguages)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	conversionType, err := ui.SelectConversionType()
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
 
-	ui.SelectLanguage(*selectedManga.AvailableTranslatedLanguages)
+	fmt.Println("Downloading manga...")
+	fmt.Println("Manga Title:", selectedManga.Title)
+	fmt.Println("Language:", language)
+	fmt.Println("Conversion Type:", conversionType)
+
 }
