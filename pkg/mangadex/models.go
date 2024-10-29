@@ -41,13 +41,14 @@ type mangadexMangaSearchResult struct {
 }
 
 type MangaResult struct {
-	ID        string `json:"id"`
-	Title     string `json:"title"`
-	Author    string `json:"author"`
-	Genres    string `json:"genres"`
-	AltTitles string `json:"altTitles"`
-	Year      int    `json:"year"`
-	Status    string `json:"status"`
+	ID                           string    `json:"id"`
+	Title                        string    `json:"title"`
+	Author                       string    `json:"author"`
+	Genres                       string    `json:"genres"`
+	AltTitles                    string    `json:"altTitles"`
+	Year                         int       `json:"year"`
+	Status                       string    `json:"status"`
+	AvailableTranslatedLanguages *[]string `json:"availableTranslatedLanguages"`
 }
 
 // Author

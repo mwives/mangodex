@@ -38,13 +38,14 @@ func FormatMangaResult(mangaData mangadexMangaSearchResult) []MangaResult {
 		}
 
 		mangaResults = append(mangaResults, MangaResult{
-			ID:        mangaData.ID,
-			Title:     mangaTitle,
-			Author:    mangaData.Relationships[0].Attributes.Name,
-			Genres:    genres,
-			AltTitles: altTitles,
-			Year:      mangaData.Atributes.Year,
-			Status:    mangaData.Atributes.Status,
+			ID:                           mangaData.ID,
+			Title:                        mangaTitle,
+			Author:                       mangaData.Relationships[0].Attributes.Name,
+			Genres:                       genres,
+			AltTitles:                    altTitles,
+			Year:                         mangaData.Atributes.Year,
+			Status:                       mangaData.Atributes.Status,
+			AvailableTranslatedLanguages: &mangaData.Atributes.AvailableTranslatedLanguages,
 		})
 	}
 
