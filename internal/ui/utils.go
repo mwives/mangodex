@@ -1,9 +1,6 @@
 package ui
 
-import "fmt"
-
 func languageToFlag(languageCode string) string {
-	fmt.Println(languageCode)
 	langFlags := map[string]string{
 		"ar":    "🇸🇦",
 		"de":    "🇩🇪",
