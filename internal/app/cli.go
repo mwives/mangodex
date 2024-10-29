@@ -51,4 +51,6 @@ func Run() {
 	}
 
 	ui.ConfirmMangaSelection(selectedManga)
+
+	ui.SelectLanguage(*selectedManga.AvailableTranslatedLanguages)
 }
