@@ -7,17 +7,13 @@ import (
 )
 
 var (
-	searchType  string
-	searchQuery string
-	mangaId     string
-)
-
-var (
 	MangaTitleSearchType  = "manga_title"
 	MangaAuthorSearchType = "author"
 )
 
-func AskSearchType() (string, string) {
+func SelectSearchType() (string, string) {
+	var searchType, searchQuery string
+
 	form := huh.NewForm(
 		huh.NewGroup(
 			huh.NewSelect[string]().
@@ -35,7 +31,8 @@ func AskSearchType() (string, string) {
 						return "Enter Author Name"
 					}
 					return ""
-				}, &searchType).Value(&searchQuery),
+				}, &searchType).
+				Value(&searchQuery),
 		),
 	)
 

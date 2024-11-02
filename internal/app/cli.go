@@ -10,7 +10,7 @@ import (
 func Run() {
 	mangadexApiClient := mangadex.NewMangadexApiClient("https://api.mangadex.org")
 
-	searchType, searchQuery := ui.AskSearchType()
+	searchType, searchQuery := ui.SelectSearchType()
 
 	var mangaList []mangadex.MangaResult
 	var err error
