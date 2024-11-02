@@ -70,9 +70,17 @@ func Run() {
 		return
 	}
 
-	fmt.Printf("Downloading manga by %s...", downloadType)
+	startRange, endRange, err := ui.InsertRange(downloadType)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	fmt.Printf("Downloading manga by %s...\n", downloadType)
 	fmt.Println("Manga Title:", selectedManga.Title)
 	fmt.Println("Language:", language)
 	fmt.Println("Conversion Type:", conversionType)
-
+	fmt.Println("Download Type:", downloadType)
+	fmt.Println("Start Range:", startRange)
+	fmt.Println("End Range:", endRange)
 }
