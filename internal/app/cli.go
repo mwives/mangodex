@@ -78,11 +78,23 @@ func Run() {
 		return
 	}
 
+	// Here we have a problem. A manga may not have a volume or chapter for a certain language.
+	// In this case, the best option would be to list all volumes/chapters that are available for the selected language.
+	// For now, we will just assume that the manga always has volumes and chapters for the selected language.
 	startRange, endRange, err := ui.InsertRange(downloadType)
 	if err != nil {
 		handleError(err, "There was an error specifying the download range. Please try again.")
 		return
 	}
+
+	mangaVolumesAndChapters, err := mangadexApiClient.SearchMangaVolumesAndChapters(selectedManga.ID, language)
+	if err != nil {
+		handleError(err, "There was an error searching for manga volumes and chapters. Please try again.")
+		return
+	}
+
+	// filter out volumes and chapters based on the selected range
+	mangaVolumesAndChapters = mangadex.FilterMangaVolumesAndChapters(mangaVolumesAndChapters, startRange, endRange)
 
 	fmt.Printf("Downloading manga by %s...\n", downloadType)
 	fmt.Println("Manga Title:", selectedManga.Title)
@@ -91,4 +103,5 @@ func Run() {
 	fmt.Println("Download Type:", downloadType)
 	fmt.Println("Start Range:", startRange)
 	fmt.Println("End Range:", endRange)
+	fmt.Printf("Volumes: %d\n", len(mangaVolumesAndChapters.Volumes))
 }

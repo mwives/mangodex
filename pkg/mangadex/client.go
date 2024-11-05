@@ -1,6 +1,7 @@
 package mangadex
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/go-resty/resty/v2"
@@ -81,4 +82,34 @@ func (m *MangadexApiClient) SearchAuthors(name string) ([]Author, error) {
 	}
 
 	return authorResults, nil
+}
+
+func (m *MangadexApiClient) SearchMangaVolumesAndChapters(mangaID, language string) (MangaAggregate, error) {
+	var result mangadexMangaAggregateResult
+
+	_, err := m.client.R().
+		SetResult(&result).
+		SetQueryParam("translatedLanguage[]", language).
+		Get(fmt.Sprintf("/manga/%s/aggregate", mangaID))
+	if err != nil {
+		return MangaAggregate{}, err
+	}
+
+	var mangaAggregate MangaAggregate
+	for volume, volumeData := range result.Volumes {
+		var chapters []Chapter
+		for chapter, chapterData := range volumeData.Chapters {
+			chapters = append(chapters, Chapter{
+				Chapter: chapter,
+				ID:      chapterData.ID,
+			})
+		}
+
+		mangaAggregate.Volumes = append(mangaAggregate.Volumes, Volume{
+			Volume:   volume,
+			Chapters: chapters,
+		})
+	}
+
+	return mangaAggregate, nil
 }

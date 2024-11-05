@@ -51,6 +51,38 @@ type MangaResult struct {
 	AvailableTranslatedLanguages *[]string `json:"availableTranslatedLanguages"`
 }
 
+// Manga Aggregate (volumes and chapters)
+type mangadexMangaAggregateResult struct {
+	Volumes map[string]aggregateVolumeResult `json:"volumes"`
+}
+
+type aggregateVolumeResult struct {
+	Volume   string                            `json:"volume"`
+	Count    int                               `json:"count"`
+	Chapters map[string]aggregateChapterResult `json:"chapters"`
+}
+
+type aggregateChapterResult struct {
+	Chapter string   `json:"chapter"`
+	ID      string   `json:"id"`
+	Others  []string `json:"others"`
+	Count   int      `json:"count"`
+}
+
+type MangaAggregate struct {
+	Volumes []Volume `json:"volumes"`
+}
+
+type Volume struct {
+	Volume   string    `json:"volume"`
+	Chapters []Chapter `json:"chapters"`
+}
+
+type Chapter struct {
+	Chapter string `json:"chapter"`
+	ID      string `json:"id"`
+}
+
 // Author
 type mangadexAuthorSearchResult struct {
 	Data []struct {

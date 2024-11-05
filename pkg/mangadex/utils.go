@@ -1,5 +1,7 @@
 package mangadex
 
+import "strconv"
+
 func FormatMangaResult(mangaData mangadexMangaSearchResult) []MangaResult {
 	var mangaResults []MangaResult
 	for _, mangaData := range mangaData.Data {
@@ -50,4 +52,23 @@ func FormatMangaResult(mangaData mangadexMangaSearchResult) []MangaResult {
 	}
 
 	return mangaResults
+}
+
+func FilterMangaVolumesAndChapters(mangaVolumesAndChapters MangaAggregate, startRange, endRange int) MangaAggregate {
+	filteredMangaVolumesAndChapters := MangaAggregate{
+		Volumes: []Volume{},
+	}
+
+	for _, volume := range mangaVolumesAndChapters.Volumes {
+		volumeNumber, err := strconv.Atoi(volume.Volume)
+		if err != nil {
+			continue
+		}
+
+		if volumeNumber >= startRange && volumeNumber <= endRange {
+			filteredMangaVolumesAndChapters.Volumes = append(filteredMangaVolumesAndChapters.Volumes, volume)
+		}
+	}
+
+	return filteredMangaVolumesAndChapters
 }
