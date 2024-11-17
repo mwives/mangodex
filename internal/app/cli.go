@@ -58,7 +58,15 @@ func Run() {
 		return
 	}
 
-	ui.ConfirmMangaSelection(selectedManga)
+	mangaConfirmed, err := ui.ConfirmMangaSelection(selectedManga)
+	if err != nil {
+		handleError(err, "There was an error during manga confirmation. Please try again.")
+		return
+	}
+	if !mangaConfirmed {
+		fmt.Println("Manga selection was not confirmed. Exiting...")
+		return
+	}
 
 	language, err := ui.SelectLanguage(*selectedManga.AvailableTranslatedLanguages)
 	if err != nil {
