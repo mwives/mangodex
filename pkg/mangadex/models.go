@@ -1,6 +1,6 @@
 package mangadex
 
-// Manga
+// GET /manga
 type mangadexMangaSearchResult struct {
 	Data []struct {
 		ID        string `json:"id"`
@@ -51,7 +51,7 @@ type MangaResult struct {
 	AvailableTranslatedLanguages *[]string `json:"availableTranslatedLanguages"`
 }
 
-// Manga Aggregate (volumes and chapters)
+// GET /manga/{id}/aggregate
 type mangadexMangaAggregateResult struct {
 	Volumes map[string]aggregateVolumeResult `json:"volumes"`
 }
@@ -83,7 +83,7 @@ type Chapter struct {
 	ID      string `json:"id"`
 }
 
-// Manga Chapter (at-home)
+// GET /at-home/server/{chapterID}
 type mangadexChapterDataResult struct {
 	Chapter struct {
 		Hash string   `json:"hash"`
@@ -96,7 +96,7 @@ type ChapterData struct {
 	Data []string `json:"data"`
 }
 
-// Author
+// GET /author
 type mangadexAuthorSearchResult struct {
 	Data []struct {
 		ID        string `json:"id"`
