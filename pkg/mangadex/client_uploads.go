@@ -7,6 +7,10 @@ import (
 	"github.com/go-resty/resty/v2"
 )
 
+const (
+	pageImageEndpoint = "/data/%s/%s"
+)
+
 type MangadexUploadsApiClient struct {
 	client *resty.Client
 	apiURL string
@@ -18,7 +22,7 @@ func NewMangadexUploadsApiClient() *MangadexUploadsApiClient {
 	client := resty.New().
 		SetBaseURL(baseURL).
 		SetTimeout(10*time.Second).
-		SetHeader("Content-Type", "application/json")
+		SetHeader("Content-Type", "image/jpeg")
 
 	return &MangadexUploadsApiClient{
 		client: client,
@@ -27,10 +31,9 @@ func NewMangadexUploadsApiClient() *MangadexUploadsApiClient {
 }
 
 func (m *MangadexUploadsApiClient) FetchPageImage(chapterHash, pageFile string) ([]byte, error) {
-	url := fmt.Sprintf("/data/%s/%s", chapterHash, pageFile)
+	url := fmt.Sprintf(pageImageEndpoint, chapterHash, pageFile)
 
 	resp, err := m.client.R().
-		SetHeader("Content-Type", "image/jpeg").
 		Get(url)
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch image: %w", err)
