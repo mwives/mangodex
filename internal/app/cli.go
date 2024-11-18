@@ -6,6 +6,7 @@ import (
 
 	"github.com/mwives/mangodex/internal/ui"
 	"github.com/mwives/mangodex/pkg/mangadex"
+	"github.com/mwives/mangodex/pkg/mangadex/downloader"
 )
 
 func handleError(err error, userMessage string) {
@@ -17,6 +18,8 @@ func handleError(err error, userMessage string) {
 
 func Run() {
 	mangadexApiClient := mangadex.NewMangadexApiClient()
+	mangadexUploadsApiClient := mangadex.NewMangadexUploadsApiClient()
+	downloader := downloader.NewDownloader(mangadexApiClient, mangadexUploadsApiClient)
 
 	searchType, searchQuery := ui.SelectSearchType()
 
@@ -106,14 +109,8 @@ func Run() {
 			FilterMangaVolumesAndChaptersByVolumeRange(mangaVolumesAndChapters, startRange, endRange)
 
 		for _, volume := range mangaVolumesAndChapters.Volumes {
-			fmt.Println("Volume:", volume.Volume)
 			for _, chapter := range volume.Chapters {
-				result, err := mangadexApiClient.GetMangaChapterData(chapter.ID)
-				if err != nil {
-					handleError(err, "There was an error getting the chapter data. Please try again.")
-					return
-				}
-				fmt.Printf("Chapter Data: %v\n", result)
+				downloader.DownloadChapter(chapter.ID)
 			}
 		}
 	} else {
