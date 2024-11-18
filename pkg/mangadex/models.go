@@ -86,8 +86,14 @@ type Chapter struct {
 // Manga Chapter (at-home)
 type mangadexChapterDataResult struct {
 	Chapter struct {
+		Hash string   `json:"hash"`
 		Data []string `json:"data"`
 	} `json:"chapter"`
+}
+
+type ChapterData struct {
+	Hash string   `json:"hash"`
+	Data []string `json:"data"`
 }
 
 // Author

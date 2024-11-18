@@ -116,15 +116,19 @@ func (m *MangadexApiClient) SearchMangaVolumesAndChapters(mangaID, language stri
 	return mangaAggregate, nil
 }
 
-func (m *MangadexApiClient) GetMangaChapterData(chapterID string) (interface{}, error) {
+func (m *MangadexApiClient) GetMangaChapterData(chapterID string) (ChapterData, error) {
 	var result mangadexChapterDataResult
 
 	_, err := m.client.R().
 		SetResult(&result).
 		Get(fmt.Sprintf("/at-home/server/%s?forcePort443=true", chapterID))
 	if err != nil {
-		return nil, err
+		return ChapterData{}, err
 	}
 
-	return result, nil
+	chapterData := ChapterData{
+		Hash: result.Chapter.Hash,
+		Data: result.Chapter.Data,
+	}
+	return chapterData, nil
 }
