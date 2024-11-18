@@ -83,6 +83,13 @@ type Chapter struct {
 	ID      string `json:"id"`
 }
 
+// Manga Chapter (at-home)
+type mangadexChapterDataResult struct {
+	Chapter struct {
+		Data []string `json:"data"`
+	} `json:"chapter"`
+}
+
 // Author
 type mangadexAuthorSearchResult struct {
 	Data []struct {

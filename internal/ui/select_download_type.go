@@ -3,8 +3,8 @@ package ui
 import "github.com/charmbracelet/huh"
 
 var (
-	DownloadByVolumeType  = "volume"
-	DownloadByChapterType = "chapter"
+	VolumeDownloadType  = "volume"
+	ChapterDownloadType = "chapter"
 )
 
 func SelectDownloadType() (string, error) {
@@ -15,8 +15,8 @@ func SelectDownloadType() (string, error) {
 			huh.NewSelect[string]().
 				Title("Select Conversion Type").
 				Options(
-					huh.NewOption("Download by Volume", DownloadByVolumeType),
-					huh.NewOption("Download by Chapter", DownloadByChapterType),
+					huh.NewOption("Download by Volume", VolumeDownloadType),
+					huh.NewOption("Download by Chapter", ChapterDownloadType),
 				).
 				Value(&conversionType),
 		),

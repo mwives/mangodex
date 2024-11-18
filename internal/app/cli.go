@@ -16,7 +16,7 @@ func handleError(err error, userMessage string) {
 }
 
 func Run() {
-	mangadexApiClient := mangadex.NewMangadexApiClient("https://api.mangadex.org")
+	mangadexApiClient := mangadex.NewMangadexApiClient()
 
 	searchType, searchQuery := ui.SelectSearchType()
 
@@ -101,8 +101,25 @@ func Run() {
 		return
 	}
 
-	// filter out volumes and chapters based on the selected range
-	mangaVolumesAndChapters = mangadex.FilterMangaVolumesAndChapters(mangaVolumesAndChapters, startRange, endRange)
+	if downloadType == ui.VolumeDownloadType {
+		mangaVolumesAndChapters = mangadex.
+			FilterMangaVolumesAndChaptersByVolumeRange(mangaVolumesAndChapters, startRange, endRange)
+
+		for _, volume := range mangaVolumesAndChapters.Volumes {
+			fmt.Println("Volume:", volume.Volume)
+			for _, chapter := range volume.Chapters {
+				result, err := mangadexApiClient.GetMangaChapterData(chapter.ID)
+				if err != nil {
+					handleError(err, "There was an error getting the chapter data. Please try again.")
+					return
+				}
+				fmt.Printf("Chapter Data: %v\n", result)
+			}
+		}
+	} else {
+		mangaVolumesAndChapters = mangadex.
+			FilterMangaVolumesAndChaptersByChapterRange(mangaVolumesAndChapters, startRange, endRange, downloadType)
+	}
 
 	fmt.Printf("Downloading manga by %s...\n", downloadType)
 	fmt.Println("Manga Title:", selectedManga.Title)

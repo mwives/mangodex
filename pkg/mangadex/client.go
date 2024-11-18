@@ -12,7 +12,9 @@ type MangadexApiClient struct {
 	apiURL string
 }
 
-func NewMangadexApiClient(baseURL string) *MangadexApiClient {
+func NewMangadexApiClient() *MangadexApiClient {
+	baseURL := "https://api.mangadex.org"
+
 	client := resty.New().
 		SetBaseURL(baseURL).
 		SetTimeout(10*time.Second).
@@ -112,4 +114,17 @@ func (m *MangadexApiClient) SearchMangaVolumesAndChapters(mangaID, language stri
 	}
 
 	return mangaAggregate, nil
+}
+
+func (m *MangadexApiClient) GetMangaChapterData(chapterID string) (interface{}, error) {
+	var result mangadexChapterDataResult
+
+	_, err := m.client.R().
+		SetResult(&result).
+		Get(fmt.Sprintf("/at-home/server/%s?forcePort443=true", chapterID))
+	if err != nil {
+		return nil, err
+	}
+
+	return result, nil
 }
