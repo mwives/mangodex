@@ -9,7 +9,7 @@ import (
 	"github.com/charmbracelet/huh"
 )
 
-func InsertRange(downloadType string) (int, int, error) {
+func InsertRange(downloadType string) (float64, float64, error) {
 	var downloadRange string
 
 	form := huh.NewForm(
@@ -35,7 +35,7 @@ func InsertRange(downloadType string) (int, int, error) {
 		return 0, 0, err
 	}
 
-	start, end, err := convertStrRangeToInt(downloadRange)
+	start, end, err := convertStrRangeToFloat64(downloadRange)
 	if err != nil {
 		return 0, 0, err
 	}
@@ -43,13 +43,13 @@ func InsertRange(downloadType string) (int, int, error) {
 	return start, end, nil
 }
 
-func convertStrRangeToInt(rangeStr string) (int, int, error) {
-	var start, end int
+func convertStrRangeToFloat64(rangeStr string) (float64, float64, error) {
+	var start, end float64
 	var err error
 
 	// if the range doesn't contain a dash, it's a single value
 	if !strings.Contains(rangeStr, "-") {
-		start, err = strconv.Atoi(rangeStr)
+		start, err = strconv.ParseFloat(rangeStr, 64)
 		if err != nil {
 			return 0, 0, err
 		}
@@ -62,12 +62,12 @@ func convertStrRangeToInt(rangeStr string) (int, int, error) {
 		ranges[1] = "0"
 	}
 
-	start, err = strconv.Atoi(ranges[0])
+	start, err = strconv.ParseFloat(ranges[0], 64)
 	if err != nil {
 		return 0, 0, err
 	}
 
-	end, err = strconv.Atoi(ranges[1])
+	end, err = strconv.ParseFloat(ranges[1], 64)
 	if err != nil {
 		return 0, 0, err
 	}

@@ -57,13 +57,13 @@ func FormatMangaResult(mangaData mangadexMangaSearchResult) []MangaResult {
 	return mangaResults
 }
 
-func FilterMangaVolumesAndChaptersByVolumeRange(mangaVolumesAndChapters MangaAggregate, startRange, endRange int) MangaAggregate {
+func FilterMangaVolumesByRange(mangaVolumesAndChapters MangaAggregate, startRange, endRange float64) MangaAggregate {
 	filteredMangaVolumesAndChapters := MangaAggregate{
 		Volumes: []Volume{},
 	}
 
 	for _, volume := range mangaVolumesAndChapters.Volumes {
-		volumeNumber, err := strconv.Atoi(volume.Volume)
+		volumeNumber, err := strconv.ParseFloat(volume.Volume, 64)
 		if err != nil {
 			continue
 		}
@@ -73,15 +73,11 @@ func FilterMangaVolumesAndChaptersByVolumeRange(mangaVolumesAndChapters MangaAgg
 		}
 	}
 
-	sortMangaVolumes(filteredMangaVolumesAndChapters)
+	sortMangaVolumes(&filteredMangaVolumesAndChapters)
 	return filteredMangaVolumesAndChapters
 }
 
-func FilterMangaVolumesAndChaptersByChapterRange(mangaVolumesAndChapters MangaAggregate, startRange, endRange int, downloadType string) MangaAggregate {
-	// Some chapters are not integers (ex: Berserk starts at chapter 0.1)
-	startRangeFloat := float64(startRange)
-	endRangeFloat := float64(endRange)
-
+func FilterMangaChaptersByRange(mangaVolumesAndChapters MangaAggregate, startRange, endRange float64) []Chapter {
 	filteredMangaVolumesAndChapters := MangaAggregate{
 		Volumes: []Volume{},
 	}
@@ -94,7 +90,7 @@ func FilterMangaVolumesAndChaptersByChapterRange(mangaVolumesAndChapters MangaAg
 				continue
 			}
 
-			if chapterNumber >= startRangeFloat && chapterNumber <= endRangeFloat {
+			if chapterNumber >= startRange && chapterNumber <= endRange {
 				filteredChapters = append(filteredChapters, chapter)
 			}
 		}
@@ -106,21 +102,31 @@ func FilterMangaVolumesAndChaptersByChapterRange(mangaVolumesAndChapters MangaAg
 		}
 	}
 
-	sortMangaVolumes(filteredMangaVolumesAndChapters)
-	return filteredMangaVolumesAndChapters
+	sortMangaVolumes(&filteredMangaVolumesAndChapters)
+	return getChaptersFromManga(filteredMangaVolumesAndChapters)
 }
 
-func sortMangaVolumes(mangaVolumesAndChapters MangaAggregate) {
-	sort.Slice(mangaVolumesAndChapters.Volumes, func(i, j int) bool {
-		volumeI, _ := strconv.Atoi(mangaVolumesAndChapters.Volumes[i].Volume)
-		volumeJ, _ := strconv.Atoi(mangaVolumesAndChapters.Volumes[j].Volume)
+func sortMangaVolumes(manga *MangaAggregate) {
+	sort.Slice(manga.Volumes, func(i, j int) bool {
+		volumeI, _ := strconv.Atoi(manga.Volumes[i].Volume)
+		volumeJ, _ := strconv.Atoi(manga.Volumes[j].Volume)
 		return volumeI < volumeJ
 	})
-	for _, volume := range mangaVolumesAndChapters.Volumes {
+	for _, volume := range manga.Volumes {
 		sort.Slice(volume.Chapters, func(i, j int) bool {
 			chapterI, _ := strconv.ParseFloat(volume.Chapters[i].Chapter, 64)
 			chapterJ, _ := strconv.ParseFloat(volume.Chapters[j].Chapter, 64)
 			return chapterI < chapterJ
 		})
 	}
+}
+
+func getChaptersFromManga(manga MangaAggregate) []Chapter {
+	var chapters []Chapter
+	for _, volume := range manga.Volumes {
+		for _, chapter := range volume.Chapters {
+			chapters = append(chapters, chapter)
+		}
+	}
+	return chapters
 }
