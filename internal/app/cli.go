@@ -105,17 +105,21 @@ func Run() {
 	}
 
 	if downloadType == ui.VolumeDownloadType {
-		mangaVolumesAndChapters = mangadex.
-			FilterMangaVolumesAndChaptersByVolumeRange(mangaVolumesAndChapters, startRange, endRange)
+		manga := mangadex.
+			FilterMangaVolumesByRange(mangaVolumesAndChapters, startRange, endRange)
 
-		for _, volume := range mangaVolumesAndChapters.Volumes {
+		for _, volume := range manga.Volumes {
 			for _, chapter := range volume.Chapters {
 				downloader.DownloadChapter(chapter.ID)
 			}
 		}
 	} else {
-		mangaVolumesAndChapters = mangadex.
-			FilterMangaVolumesAndChaptersByChapterRange(mangaVolumesAndChapters, startRange, endRange, downloadType)
+		chapters := mangadex.
+			FilterMangaChaptersByRange(mangaVolumesAndChapters, startRange, endRange)
+
+		for _, chapter := range chapters {
+			downloader.DownloadChapter(chapter.ID)
+		}
 	}
 
 	fmt.Printf("Downloading manga by %s...\n", downloadType)
@@ -125,5 +129,4 @@ func Run() {
 	fmt.Println("Download Type:", downloadType)
 	fmt.Println("Start Range:", startRange)
 	fmt.Println("End Range:", endRange)
-	fmt.Printf("Volumes: %d\n", len(mangaVolumesAndChapters.Volumes))
 }
