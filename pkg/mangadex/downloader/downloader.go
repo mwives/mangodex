@@ -6,6 +6,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"sync"
 
 	"github.com/mwives/mangodex/internal/app/config"
 	"github.com/mwives/mangodex/pkg/mangadex"
@@ -37,16 +38,38 @@ func (d *Downloader) DownloadChapter(chapterID string) error {
 		return fmt.Errorf("failed to create save directory: %w", err)
 	}
 
+	var wg sync.WaitGroup
+	errChan := make(chan error, len(chapterData.Data))
+
 	// Each `data` element is a page file name (e.g. `1-[uuid].jpg`)
 	for _, page := range chapterData.Data {
-		image, err := d.UploadsClient.FetchPageImage(chapterData.Hash, page)
-		if err != nil {
-			return fmt.Errorf("unable to find image: %w", err)
-		}
+		wg.Add(1)
 
-		if err := d.downloadFile(image, saveDir, page); err != nil {
-			return fmt.Errorf("failed to download file for page %s: %w", page, err)
-		}
+		go func(page string) {
+			defer wg.Done()
+
+			image, err := d.UploadsClient.FetchPageImage(chapterData.Hash, page)
+			if err != nil {
+				errChan <- fmt.Errorf("unable to fetch image: %w", err)
+				return
+			}
+
+			if err := d.downloadFile(image, saveDir, page); err != nil {
+				errChan <- fmt.Errorf("failed to download file for page %s: %w", page, err)
+			}
+		}(page)
+	}
+
+	wg.Wait()
+	close(errChan)
+
+	var downloadErrors []error
+	for err := range errChan {
+		downloadErrors = append(downloadErrors, err)
+	}
+
+	if len(downloadErrors) > 0 {
+		return fmt.Errorf("failed to download chapter %s: %v", chapterID, downloadErrors)
 	}
 
 	return nil
