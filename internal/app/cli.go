@@ -110,7 +110,7 @@ func Run() {
 
 		for _, volume := range manga.Volumes {
 			for _, chapter := range volume.Chapters {
-				downloader.DownloadChapter(chapter.ID)
+				downloader.DownloadChapter(chapter)
 			}
 		}
 	} else {
@@ -118,7 +118,7 @@ func Run() {
 			FilterMangaChaptersByRange(mangaVolumesAndChapters, startRange, endRange)
 
 		for _, chapter := range chapters {
-			downloader.DownloadChapter(chapter.ID)
+			downloader.DownloadChapter(chapter)
 		}
 	}
 

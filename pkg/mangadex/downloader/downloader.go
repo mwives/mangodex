@@ -27,8 +27,8 @@ func NewDownloader(
 	}
 }
 
-func (d *Downloader) DownloadChapter(chapterID string) error {
-	chapterData, err := d.Client.GetMangaChapterData(chapterID)
+func (d *Downloader) DownloadChapter(chapter mangadex.Chapter) error {
+	chapterData, err := d.Client.GetMangaChapterData(chapter.ID)
 	if err != nil {
 		return err
 	}
@@ -54,7 +54,9 @@ func (d *Downloader) DownloadChapter(chapterID string) error {
 				return
 			}
 
-			if err := d.downloadFile(image, saveDir, page); err != nil {
+			if err := d.downloadFile(
+				image, saveDir, fmt.Sprintf("%s-%s", chapter.Chapter, page),
+			); err != nil {
 				errChan <- fmt.Errorf("failed to download file for page %s: %w", page, err)
 			}
 		}(page)
@@ -69,7 +71,7 @@ func (d *Downloader) DownloadChapter(chapterID string) error {
 	}
 
 	if len(downloadErrors) > 0 {
-		return fmt.Errorf("failed to download chapter %s: %v", chapterID, downloadErrors)
+		return fmt.Errorf("failed to download chapter %s: %v", chapter.ID, downloadErrors)
 	}
 
 	return nil
