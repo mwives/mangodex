@@ -120,7 +120,7 @@ func Run() {
 			converter.Convert(
 				converter.ConversionType(conversionType),
 				saveDir,
-				fmt.Sprintf("%s/%s/%s.pdf", rootSaveDir, selectedManga.Title, fmt.Sprintf("%s - vol. %s", selectedManga.Title, volume.Volume)),
+				fmt.Sprintf("%s/%s/%s.%s", rootSaveDir, selectedManga.Title, fmt.Sprintf("%s - vol. %s", selectedManga.Title, volume.Volume), conversionType),
 			)
 			os.RemoveAll(saveDir)
 		}
@@ -134,7 +134,7 @@ func Run() {
 			converter.Convert(
 				converter.ConversionType(conversionType),
 				saveDir,
-				fmt.Sprintf("%s/%s/%s.pdf", rootSaveDir, selectedManga.Title, fmt.Sprintf("Ch. %s", chapter.Chapter)),
+				fmt.Sprintf("%s/%s/%s.%s", rootSaveDir, selectedManga.Title, fmt.Sprintf("Ch. %s", chapter.Chapter), conversionType),
 			)
 			os.RemoveAll(saveDir)
 		}
