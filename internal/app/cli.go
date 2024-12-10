@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/mwives/mangodex/internal/app/config"
 	"github.com/mwives/mangodex/internal/ui"
 	"github.com/mwives/mangodex/pkg/mangadex"
 	"github.com/mwives/mangodex/pkg/mangadex/downloader"
@@ -77,11 +78,11 @@ func Run() {
 		return
 	}
 
-	conversionType, err := ui.SelectConversionType()
-	if err != nil {
-		handleError(err, "There was an error during conversion type selection. Please try again.")
-		return
-	}
+	// conversionType, err := ui.SelectConversionType()
+	// if err != nil {
+	// 	handleError(err, "There was an error during conversion type selection. Please try again.")
+	// 	return
+	// }
 
 	downloadType, err := ui.SelectDownloadType()
 	if err != nil {
@@ -104,29 +105,30 @@ func Run() {
 		return
 	}
 
+	rootSaveDir := config.GetSaveDir()
+
 	if downloadType == ui.VolumeDownloadType {
 		manga := mangadex.
 			FilterMangaVolumesByRange(mangaVolumesAndChapters, startRange, endRange)
 
 		for _, volume := range manga.Volumes {
+			saveDir := fmt.Sprintf("%s/%s/%s", rootSaveDir, selectedManga.Title, fmt.Sprintf("Vol. %s", volume.Volume))
 			for _, chapter := range volume.Chapters {
-				downloader.DownloadChapter(chapter)
+				downloader.DownloadChapter(chapter, saveDir)
 			}
+			// TODO: Implement conversion (group by volumes)
 		}
 	} else {
 		chapters := mangadex.
 			FilterMangaChaptersByRange(mangaVolumesAndChapters, startRange, endRange)
 
 		for _, chapter := range chapters {
-			downloader.DownloadChapter(chapter)
+			saveDir := fmt.Sprintf("%s/%s/%s", rootSaveDir, selectedManga.Title, fmt.Sprintf("Ch. %s", chapter.Chapter))
+			downloader.DownloadChapter(chapter, saveDir)
+			// TODO: Implement conversion (group by chapters)
 		}
 	}
 
-	fmt.Printf("Downloading manga by %s...\n", downloadType)
-	fmt.Println("Manga Title:", selectedManga.Title)
-	fmt.Println("Language:", language)
-	fmt.Println("Conversion Type:", conversionType)
-	fmt.Println("Download Type:", downloadType)
-	fmt.Println("Start Range:", startRange)
-	fmt.Println("End Range:", endRange)
+	// Cleanup
+	os.RemoveAll(rootSaveDir)
 }

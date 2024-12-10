@@ -8,7 +8,6 @@ import (
 	"path/filepath"
 	"sync"
 
-	"github.com/mwives/mangodex/internal/app/config"
 	"github.com/mwives/mangodex/pkg/mangadex"
 )
 
@@ -27,13 +26,12 @@ func NewDownloader(
 	}
 }
 
-func (d *Downloader) DownloadChapter(chapter mangadex.Chapter) error {
+func (d *Downloader) DownloadChapter(chapter mangadex.Chapter, saveDir string) error {
 	chapterData, err := d.Client.GetMangaChapterData(chapter.ID)
 	if err != nil {
 		return err
 	}
 
-	saveDir := config.GetSaveDir()
 	if err := os.MkdirAll(saveDir, os.ModePerm); err != nil {
 		return fmt.Errorf("failed to create save directory: %w", err)
 	}
