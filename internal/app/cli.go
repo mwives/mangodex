@@ -6,6 +6,7 @@ import (
 
 	"github.com/mwives/mangodex/internal/app/config"
 	"github.com/mwives/mangodex/internal/ui"
+	"github.com/mwives/mangodex/pkg/converter"
 	"github.com/mwives/mangodex/pkg/mangadex"
 	"github.com/mwives/mangodex/pkg/mangadex/downloader"
 )
@@ -78,11 +79,11 @@ func Run() {
 		return
 	}
 
-	// conversionType, err := ui.SelectConversionType()
-	// if err != nil {
-	// 	handleError(err, "There was an error during conversion type selection. Please try again.")
-	// 	return
-	// }
+	conversionType, err := ui.SelectConversionType()
+	if err != nil {
+		handleError(err, "There was an error during conversion type selection. Please try again.")
+		return
+	}
 
 	downloadType, err := ui.SelectDownloadType()
 	if err != nil {
@@ -116,7 +117,12 @@ func Run() {
 			for _, chapter := range volume.Chapters {
 				downloader.DownloadChapter(chapter, saveDir)
 			}
-			// TODO: Implement conversion (group by volumes)
+			converter.Convert(
+				converter.ConversionType(conversionType),
+				saveDir,
+				fmt.Sprintf("%s/%s/%s.pdf", rootSaveDir, selectedManga.Title, fmt.Sprintf("%s - vol. %s", selectedManga.Title, volume.Volume)),
+			)
+			os.RemoveAll(saveDir)
 		}
 	} else {
 		chapters := mangadex.
@@ -125,10 +131,12 @@ func Run() {
 		for _, chapter := range chapters {
 			saveDir := fmt.Sprintf("%s/%s/%s", rootSaveDir, selectedManga.Title, fmt.Sprintf("Ch. %s", chapter.Chapter))
 			downloader.DownloadChapter(chapter, saveDir)
-			// TODO: Implement conversion (group by chapters)
+			converter.Convert(
+				converter.ConversionType(conversionType),
+				saveDir,
+				fmt.Sprintf("%s/%s/%s.pdf", rootSaveDir, selectedManga.Title, fmt.Sprintf("Ch. %s", chapter.Chapter)),
+			)
+			os.RemoveAll(saveDir)
 		}
 	}
-
-	// Cleanup
-	os.RemoveAll(rootSaveDir)
 }

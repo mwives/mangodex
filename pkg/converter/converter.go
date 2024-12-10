@@ -1,27 +1,26 @@
 package converter
 
-type Converter interface {
-	ConvertToPDF(inputDir, outputPath string) error
-	ConvertToEPUB(inputDir, outputPath string) error
-	ConvertToZIP(inputDir, outputPath string) error
-}
+import "fmt"
 
-type MangaConverter struct{}
+type ConversionType string
 
-func NewMangaConverter() *MangaConverter {
-	return &MangaConverter{}
-}
+const (
+	PDFConversionType  ConversionType = "pdf"
+	EPUBConversionType ConversionType = "epub"
+	ZIPConversionType  ConversionType = "zip"
+)
 
-func (m *MangaConverter) ConvertToPDF(inputDir, outputPath string) error {
-	return createPDF(inputDir, outputPath)
-}
-
-func (m *MangaConverter) ConvertToEPUB(inputDir, outputPath string) error {
-	// implementation
-	return nil
-}
-
-func (m *MangaConverter) ConvertToZIP(inputDir, outputPath string) error {
-	// implementation
-	return nil
+func Convert(conversionType ConversionType, inputDir, outputPath string) error {
+	switch conversionType {
+	case PDFConversionType:
+		return createPDF(inputDir, outputPath)
+	case EPUBConversionType:
+		// not implemented yet
+		return nil
+	case ZIPConversionType:
+		// not implemented yet
+		return nil
+	default:
+		return fmt.Errorf("unsupported conversion type: %s", conversionType)
+	}
 }
