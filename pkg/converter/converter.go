@@ -18,8 +18,7 @@ func Convert(conversionType ConversionType, inputDir, outputPath string) error {
 		// not implemented yet
 		return nil
 	case ZIPConversionType:
-		// not implemented yet
-		return nil
+		return createZIP(inputDir, outputPath)
 	default:
 		return fmt.Errorf("unsupported conversion type: %s", conversionType)
 	}
