@@ -117,11 +117,15 @@ func Run() {
 			for _, chapter := range volume.Chapters {
 				downloader.DownloadChapter(chapter, saveDir)
 			}
-			converter.Convert(
+			err := converter.Convert(
 				converter.ConversionType(conversionType),
 				saveDir,
 				fmt.Sprintf("%s/%s/%s.%s", rootSaveDir, selectedManga.Title, fmt.Sprintf("%s - vol. %s", selectedManga.Title, volume.Volume), conversionType),
 			)
+			if err != nil {
+				handleError(err, "There was an error during conversion. Please try again.")
+				return
+			}
 			os.RemoveAll(saveDir)
 		}
 	} else {
@@ -131,11 +135,15 @@ func Run() {
 		for _, chapter := range chapters {
 			saveDir := fmt.Sprintf("%s/%s/%s", rootSaveDir, selectedManga.Title, fmt.Sprintf("Ch. %s", chapter.Chapter))
 			downloader.DownloadChapter(chapter, saveDir)
-			converter.Convert(
+			err := converter.Convert(
 				converter.ConversionType(conversionType),
 				saveDir,
 				fmt.Sprintf("%s/%s/%s.%s", rootSaveDir, selectedManga.Title, fmt.Sprintf("Ch. %s", chapter.Chapter), conversionType),
 			)
+			if err != nil {
+				handleError(err, "There was an error during conversion. Please try again.")
+				return
+			}
 			os.RemoveAll(saveDir)
 		}
 	}
