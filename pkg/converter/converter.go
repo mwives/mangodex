@@ -15,8 +15,7 @@ func Convert(conversionType ConversionType, inputDir, outputPath string) error {
 	case PDFConversionType:
 		return createPDF(inputDir, outputPath)
 	case EPUBConversionType:
-		// not implemented yet
-		return nil
+		return createEPUB(inputDir, outputPath)
 	case ZIPConversionType:
 		return createZIP(inputDir, outputPath)
 	default:
